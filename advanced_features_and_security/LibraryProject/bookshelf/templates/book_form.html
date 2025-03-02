@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Form</title>
+</head>
+<body>
+    <h1>Book Form</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        {% extends "base.html" %}
+
+{% block content %}
+    <h2>Add a Book</h2>
+    <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    </form>
+{% endblock %}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
