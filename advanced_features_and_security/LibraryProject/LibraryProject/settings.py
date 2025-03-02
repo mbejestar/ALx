@@ -34,12 +34,19 @@ DEBUG = False
 SECURE_BROWSER_XSS_FILTER = True  
 X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking by disallowing the site from being loaded in an iframe.  
 SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent browsers from MIME-sniffing a response away from the declared content-type.
+SECURE_BROWSER_XSS_FILTER = True 
 ALLOWED_HOSTS = []
 
 #Secure
 
 CSRF_COOKIE_SECURE = True  # CSRF cookie will only be sent over HTTPS.  
 SESSION_COOKIE_SECURE = True  # Session cookie will only be sent over HTTPS.
+
+#HTTPS Security Setting
+SECURE_SSL_REDIRECT = True  # Redirect all non-HTTPS requests to HTTPS.  
+SECURE_HSTS_SECONDS = 31536000  # Set HSTS to one year (in seconds).  
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Include all subdomains in the HSTS policy.  
+SECURE_HSTS_PRELOAD = True  # Allow preloading of HSTS.
 
 # Application definition
 
