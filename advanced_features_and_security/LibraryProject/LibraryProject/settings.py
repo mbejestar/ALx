@@ -48,6 +48,10 @@ SECURE_HSTS_SECONDS = 31536000  # Set HSTS to one year (in seconds).
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Include all subdomains in the HSTS policy.  
 SECURE_HSTS_PRELOAD = True  # Allow preloading of HSTS.
 
+#Proxy
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Application definition
 
 INSTALLED_APPS = [
