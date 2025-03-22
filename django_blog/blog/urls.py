@@ -1,34 +1,37 @@
 from django.urls import path
-from django.contrib.auth import views
 from . import views
 from django.contrib.auth import views as auth_views
-from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, CommentCreateView, CommentDeleteView, CommentUpdateView, search_posts_view, PostByTagListView
-
+from blog import views as user_login
+from .views import (homepage, PostListView, PostDetailView, PostCreateView, 
+                    PostUpdateView, PostDeleteView, CommentCreateView, 
+                    CommentUpdateView, CommentDeleteView, search_posts)
 
 urlpatterns = [
+    # User authentication
+    path('register/', user_login.register, name='register'),
+    path('profile/', user_login.profile, name='profile'),
+    path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='blog/logout.html'), name='logout'), 
+    # Post list/detail view and CRUD operations for posts
+    path('', homepage, name='home'), # Homepage URL
+    path('posts/', PostListView.as_view(), name='posts'), # Blog Posts list
+    path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('post/new/', PostCreateView.as_view(), name='post-create'),
+    path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
+    path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
 
-    path('', views.home_view, name='home'),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('posts/', views.posts_view, name='Posts'),  # Ensure 'posts' view exists 
-    path('register/', views.register_view, name='register'),
-    path('profile/', views.profile_view, name='profile'),
-    path('Post/<int:pk>/', PostDetailView.as_view(), name='Post_detail'),
-    path('Post/<int:pk>/comment/new/', CommentCreateView.as_view(), name='new_comment'),
-    path('comment/<int:pk>/update/', CommentUpdateView.as_view(), name='edit_comment'),
-    path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), name='delete_comment'),
-    path('', views.PostListView.as_view(), name='Post_list'),  # List all posts
-    path('Post/new/', PostCreateView.as_view(), name='Post_create'),  # Create a new post
-    path('Post/<int:pk>/', PostDetailView.as_view(), name='Post_detail'),  # View a single post
-    path('Post/<int:pk>/edit/', PostUpdateView.as_view(), name='Post_edit'),  # Edit an existing post
-    path('Post/<int:pk>/delete/', PostDeleteView.as_view(), name='Post_delete'),  # Delete a post
-    path('', PostListView.as_view(), name='Post_list'),
-    path('Post/<int:pk>/comments/new/', PostCreateView.as_view(), name='Post_create'),
-    path('Post/<int:pk>/', PostDetailView.as_view(), name='Post_detail'),
-    path('Post/<int:pk>/edit/', PostUpdateView.as_view(), name='Post_edit'),
-    path('Post/<int:pk>/delete/', PostDeleteView.as_view(), name='Post_delete'),    
-    path('Post/<int:pk>/update/', PostUpdateView.as_view(), name='Post_edit'),
-    path('search/', search_posts_view, name='search_Posts'),
-    path("tags/<slug:tag_slug>/", PostByTagListView.as_view(), name="tagged_posts"),
-    
-] 
+    # Comment CRUD operations
+    path('post/<int:pk>/comments/new/', CommentCreateView.as_view(), 
+         name='add-comment'),
+    path('comment/<int:pk>/update/', CommentUpdateView.as_view(), 
+         name='update-comment'),
+    path('comment/<int:pk>/delete/', CommentDeleteView.as_view(), 
+         name='delete-comment'),
+
+    # Search functionality and filtering posts by tag
+    path('', PostListView.as_view(), name='home'),
+    path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('search/', views.search_posts, name='search-posts'),
+    path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), 
+         name='posts-by-tag'),  # Posts filtered by tag
+]
