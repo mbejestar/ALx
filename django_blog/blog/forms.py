@@ -1,54 +1,41 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from taggit.forms import TagWidget
+from taggit.utils import slugify
+from .models import Profile, Post, Comment, Tag
 
 
-class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
+class ProfileForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ("username", "email", "password1", "password2")
+        model = Profile
+        fields = ('email', 'bio', 'picture')
 
-    def save(self, commit=True):
-        user = super(CustomUserCreationForm, self).save(commit=False)
-        user.email = self.cleaned_data["email"]
-        if commit:
-            user.save()
-        return user
-    
-from .models import Post
+class CreatePostForm(forms.ModelForm):
+    tags = forms.CharField(required=False, widget=TagWidget())
 
-class PostForm(forms.Form):
     class Meta:
         model = Post
-        fields = ("title", "content", "image", "tags")
-        
+        fields = ('title', 'content')
         widgets = {
-            'tags': TagWidget()
+            'tags': TagWidget
         }
-      
-    def clean_content(self):
-        content = self.cleaned_data.get("content")
-        if not content:
-            raise forms.ValidationError("Content is required")
-        return content
 
+    def clean_tags(self):
+        tags = self.cleaned_data['tags']
+        existing_tags = Tag.objects.filter(name__in=[slugify(tags) for tag in tags.split(',')])
+        new_tags = [tag for tag in tags.split(',') if slugify(tag) not in existing_tags.values_list('name', flat=True)]
+        return ', '.join(existing_tags.values_list('name', flat=True) + new_tags)
 
+class UpdatePostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ('title', 'content')
+        widgets = {
+            'title':forms.TextInput(attrs={'class':'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control'})
 
-
-
-from .models import Comment
+        }
 
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ("content",)
-
-    def clean_content(self):
-        content = self.cleaned_data.get("content")
-        if not content or len(content) < 5:
-            raise forms.ValidationError("Comment must be at least 5 characters long")
-        return content
-    
+        fields = ('content',)
