@@ -25,8 +25,15 @@ SECRET_KEY = 'django-insecure-r%(kxpamp_--s0!616#xm5lfeu*x3i7j=^on+2@bw8dn3&c18q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['social-media-api.herokuapp.com', "localhost", "127.0.0.1"] 
 
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # Application definition
 
